@@ -3,8 +3,8 @@
 
 ###
 
-This workspace trains a Generative Adversial Network using Federated Learning, models are a variant of keras models 
-found [here](https://www.tensorflow.org/tutorials/generative/dcgan), federated learning is achieved using OpenFL's interactive API.
+This workspace trains a Generative Adversial Network using Federated Learning, models are a variant of Keras models 
+found [here](https://www.tensorflow.org/tutorials/generative/dcgan), federated learning is achieved using OpenFL interactive API.
 
 ![mnist digits](http://i.ytimg.com/vi/0QI3xgXuB-Q/hqdefault.jpg "MNIST Digits")
 
