@@ -14,7 +14,7 @@ It is a dataset of 60,000 small square 28×28 pixel grayscale images of handwrit
 
 ### 2. About models
 Generator and discriminator are defined in
-[layers.py](./workspace/layers.py) file.
+[layers.py](workspaceayers.py) file.
 
 
 ### 3. How to run this tutorial (without TLS and locally as a simulation):
