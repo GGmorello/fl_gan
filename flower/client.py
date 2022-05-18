@@ -17,7 +17,12 @@ x_test = x_test.astype('float32')
 x_test = x_test / 255.0
 
 model = create_model()
-model.compile("adam", "sparse_categorical_crossentropy", metrics=["accuracy"])
+
+x_train_ds = tf.data.Dataset.from_tensor_slices((x_train))
+x_train_ds = x_train_ds.batch(BATCH_SIZE)  # batch_size can be 1
+
+x_test_ds = tf.data.Dataset.from_tensor_slices((x_test, y_test))
+x_test_ds = x_test_ds.batch(BATCH_SIZE)  # batch_size can be 1
 
 
 class GanClient(fl.client.NumPyClient):
@@ -25,12 +30,11 @@ class GanClient(fl.client.NumPyClient):
         return model.get_weights()
 
     def fit(self, parameters, config):
-
+        model.set_weights(parameters)
         generator = model.layers[0]
         discriminator = model.layers[1]
-        for i, images in enumerate(x_train):
+        for i, images in enumerate(x_train_ds):
             noise = tf.random.normal([BATCH_SIZE, noise_dim])
-
             with tf.GradientTape() as gen_tape, tf.GradientTape() as disc_tape:
                 generated_images = generator(noise, training=True)
 
