@@ -4,6 +4,9 @@ from keras.datasets.mnist import load_data
 from numpy import expand_dims
 from layers import create_model, generator_optimizer, discriminator_optimizer, generator_loss, discriminator_loss, seed
 
+BATCH_SIZE = 256
+noise_dim = 100
+
 (x_train, y_train), (x_test, y_test) = load_data()
 x_train = expand_dims(x_train, axis=-1)
 x_train = x_train.astype('float32')
@@ -22,8 +25,7 @@ class GanClient(fl.client.NumPyClient):
         return model.get_weights()
 
     def fit(self, parameters, config):
-        BATCH_SIZE = 256
-        noise_dim = 100
+
         generator = model.layers[0]
         discriminator = model.layers[1]
         for i, images in enumerate(x_train):
@@ -48,8 +50,11 @@ class GanClient(fl.client.NumPyClient):
         return generator.get_weights(), len(x_train), {}
 
     def evaluate(self, parameters, config):
+        generator = model.layers[0]
         discriminator = model.layers[1]
-        generated_images = model(seed, training=False)
+        noise = tf.random.normal([BATCH_SIZE, noise_dim])
+        generated_images = generator(noise, training=True)
+
         real_output = discriminator(x_test, training=True)
         fake_output = discriminator(generated_images, training=True)
         loss = discriminator_loss(real_output, fake_output)
