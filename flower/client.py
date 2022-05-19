@@ -2,7 +2,7 @@ import flwr as fl
 import tensorflow as tf
 from keras.datasets.mnist import load_data
 from numpy import expand_dims
-from layers import create_model, generator_optimizer, discriminator_optimizer, generator_loss, discriminator_loss, seed
+from layers import create_model, generator_optimizer, discriminator_optimizer, generator_loss, discriminator_loss, seed, generate_and_save_images
 
 BATCH_SIZE = 256
 noise_dim = 100
@@ -58,10 +58,11 @@ class GanClient(fl.client.NumPyClient):
         discriminator = model.layers[1]
         noise = tf.random.normal([BATCH_SIZE, noise_dim])
         generated_images = generator(noise, training=True)
-
         real_output = discriminator(x_test, training=True)
         fake_output = discriminator(generated_images, training=True)
         loss = discriminator_loss(real_output, fake_output)
+        generate_and_save_images(model.layers[0], seed)
+
         return loss, len(x_test), {}
 
 

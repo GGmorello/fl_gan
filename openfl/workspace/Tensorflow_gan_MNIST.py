@@ -161,8 +161,6 @@ def train(model, train_dataset, device, optimizer, BATCH_SIZE=256, noise_dim=100
 
 @TI.register_fl_task(model='model', data_loader='train_dataset', device='device')
 def validate(model, train_dataset, device, seed=seed):
-    import pkg_resources
-    print(pkg_resources.get_distribution("tensorflow").version)
     generate_and_save_images(model.layers[0], seed)
     return {' ': 0}
 
