@@ -24,12 +24,7 @@ def main() -> None:
 
     model = create_model()
 
-    x_train_ds = tf.data.Dataset.from_tensor_slices((x_train))
-    x_train_ds = x_train_ds.batch(BATCH_SIZE)  # batch_size can be 1
-
-    x_test_ds = tf.data.Dataset.from_tensor_slices((x_test, y_test))
-    x_test_ds = x_test_ds.batch(BATCH_SIZE)  # batch_size can be 1
-    client = GanClient(model, x_train_ds, x_test_ds)
+    client = GanClient(model, x_train, x_test)
     fl.client.start_numpy_client("[::]:8080", client=client)
 
 
@@ -47,8 +42,12 @@ def load_partition(idx: int):
 class GanClient(fl.client.NumPyClient):
     def __init__(self, model, x_train, x_test):
         self.model = model
-        self.x_train, self.y_train = x_train
-        self.x_test, self.y_test = x_test
+        self.x_train = x_train
+        self.x_test = x_test
+        x_train_ds = tf.data.Dataset.from_tensor_slices((x_train))
+        self.x_train_ds = x_train_ds.batch(BATCH_SIZE)  # batch_size can be 1
+        x_test_ds = tf.data.Dataset.from_tensor_slices((x_test))
+        self.x_test_ds = x_test_ds.batch(BATCH_SIZE)  # batch_size can be 1
 
     def get_parameters(self):
         return self.model.get_weights()
