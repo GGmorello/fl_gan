@@ -1,6 +1,7 @@
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras import layers
+import matplotlib.pyplot as plt
 
 def define_discriminator():
     model = tf.keras.Sequential()
@@ -60,6 +61,20 @@ def discriminator_loss(real_output, fake_output):
 
 def generator_loss(fake_output):
     return cross_entropy(tf.ones_like(fake_output), fake_output)
+
+
+def generate_and_save_images(model, test_input):
+    predictions = model(test_input, training=False)
+
+    fig = plt.figure(figsize=(4, 4))
+
+    for i in range(predictions.shape[0]):
+        plt.subplot(4, 4, i+1)
+        plt.imshow(predictions[i, :, :, 0] * 127.5 + 127.5, cmap='gray')
+        plt.axis('off')
+
+    plt.savefig('image.png')
+    plt.show()
 
 
 cross_entropy = tf.keras.losses.BinaryCrossentropy(from_logits=True)
